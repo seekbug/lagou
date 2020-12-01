@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/lagou.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+   
+</head>
+<body>
+    <div id="app">
+        <div class="title">
+            拉勾网
+        </div>
+        <component :is="getCurrent" :lists="datalist"></component>
+
+        <div class="floor">
+            <button @click="handleClick(tab.id)" v-for="tab in tabs">{{tab.txt}}</button>
+        </div>
+    </div>
+        
+    <script>
+         
+        Vue.component('tab-position',{
+            props:['lists'],
+            data(){
+                return{
+                    datalist:[]
+                }
+            },
+            template:`
+            <div class="position">
+                <ul>
+                    <li  v-for="list in lists">
+                        
+                        <img :src="list.companyLogo">
+                        
+                        <div class="inform">
+                            <span>{{list.companyName}}</span>
+                            <p class="name">{{list.positionName}}{{list.city}}
+                            <span class="salary">{{list.salary}}</span>
+                            </p>
+                            <p class="time">{{list.createTime}}</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            `
+        })
+        Vue.component('tab-search',{
+            template:`
+            <div class="search">
+                <div class="city">
+                    全国
+                </div>
+                <div class="input" >
+                    <input type="text" placeholder="搜索职位或公司">
+                    <div class="suo"><button class="btn"></button></div>
+                    
+                </div>
+            </div>
+            `
+        })
+        Vue.component('tab-my',{
+            template:`
+            <div class="my">
+                <div class="login">
+                    <a href="#" class="log-a">登录
+                    /
+                    注册</a>
+                </div>
+                <div class="button">
+                    <a href="#">投递</a>
+                    <a href="#">面试</a>
+                    <a href="#">邀约</a>
+                    <a href="#">收藏</a>
+                </div>
+            </div>
+            `
+        })
+
+        
+        var vm = new Vue({
+            el:'#app',
+            data:{
+                datalist:[],
+                current:'position',
+                tabs:[{id:'position',txt:'职位'}, { id: 'search', txt: '搜索' }, { id: 'my', txt: '我的' }]
+            },
+            computed:{
+                getCurrent(){
+                    return "tab-"+ this.current;
+                }
+            },
+            methods:{
+                handleClick(id){
+                    this.current = id;
+                }
+            },
+            created(){
+                fetch('./data.json').then((res) => res.json()).then((res) => {
+                console.log(res)
+                this.datalist = res;
+                console.log(this.datalist);
+                })
+            }
+
+        })
+    </script>
+</body>
+</html>
